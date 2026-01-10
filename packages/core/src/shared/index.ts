@@ -3,6 +3,7 @@ export {
 	InvalidCronError,
 	MonqueError,
 	ShutdownTimeoutError,
+	WorkerModeError,
 	WorkerRegistrationError,
 } from './errors.js';
 export {

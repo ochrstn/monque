@@ -28,6 +28,7 @@ import {
 	calculateBackoff,
 	getNextCronDate,
 	MonqueError,
+	WorkerModeError,
 	WorkerRegistrationError,
 } from '@/shared';
 import type { WorkerOptions, WorkerRegistration } from '@/workers';
@@ -183,6 +184,7 @@ export class Monque extends EventEmitter {
 		super();
 		this.db = db;
 		this.options = {
+			isWorker: options.isWorker ?? false,
 			collectionName: options.collectionName ?? DEFAULTS.collectionName,
 			pollInterval: options.pollInterval ?? DEFAULTS.pollInterval,
 			maxRetries: options.maxRetries ?? DEFAULTS.maxRetries,
@@ -649,12 +651,16 @@ export class Monque extends EventEmitter {
 	 * a worker will throw a `WorkerRegistrationError`. This fail-fast behavior prevents accidental
 	 * replacement of handlers. To explicitly replace a worker, pass `{ replace: true }`.
 	 *
+	 * **Note:** This method requires the instance to be configured as a worker (`isWorker: true`).
+	 * Non-worker instances can only enqueue jobs but cannot register workers.
+	 *
 	 * @template T - The job data payload type for type-safe access to `job.data`
 	 * @param name - Job type identifier to handle
 	 * @param handler - Async function to execute for each job
 	 * @param options - Worker configuration
 	 * @param options.concurrency - Maximum concurrent jobs for this worker (default: `defaultConcurrency`)
 	 * @param options.replace - When `true`, replace existing worker instead of throwing error
+	 * @throws {WorkerModeError} When instance is not configured as a worker (`isWorker: true`)
 	 * @throws {WorkerRegistrationError} When a worker is already registered for `name` and `replace` is not `true`
 	 *
 	 * @example Basic email worker
@@ -665,6 +671,7 @@ export class Monque extends EventEmitter {
 	 *   body: string;
 	 * }
 	 *
+	 * const monque = new Monque(db, { isWorker: true });
 	 * monque.worker<EmailJob>('send-email', async (job) => {
 	 *   await emailService.send(job.data.to, job.data.subject, job.data.body);
 	 * });
@@ -698,6 +705,12 @@ export class Monque extends EventEmitter {
 	 * ```
 	 */
 	worker<T>(name: string, handler: JobHandler<T>, options: WorkerOptions = {}): void {
+		if (!this.options.isWorker) {
+			throw new WorkerModeError(
+				'Cannot register worker: instance is not configured as a worker. Use { isWorker: true } to enable worker mode.',
+			);
+		}
+
 		const concurrency = options.concurrency ?? this.options.defaultConcurrency;
 
 		// Check for existing worker and throw unless replace is explicitly true
@@ -725,9 +738,12 @@ export class Monque extends EventEmitter {
 	 * Jobs are processed concurrently up to each worker's configured concurrency limit.
 	 * The scheduler continues running until `stop()` is called.
 	 *
+	 * **Note:** This method requires the instance to be configured as a worker (`isWorker: true`).
+	 * Non-worker instances can only enqueue jobs but cannot process them.
+	 *
 	 * @example Basic startup
 	 * ```typescript
-	 * const monque = new Monque(db);
+	 * const monque = new Monque(db, { isWorker: true });
 	 * await monque.initialize();
 	 *
 	 * monque.worker('send-email', emailHandler);
@@ -756,11 +772,18 @@ export class Monque extends EventEmitter {
 	 * monque.start();
 	 * ```
 	 *
+	 * @throws {WorkerModeError} If instance is not configured as a worker (`isWorker: true`)
 	 * @throws {ConnectionError} If scheduler not initialized (call `initialize()` first)
 	 */
 	start(): void {
 		if (this.isRunning) {
 			return;
+		}
+
+		if (!this.options.isWorker) {
+			throw new WorkerModeError(
+				'Cannot start job processing: instance is not configured as a worker. Use { isWorker: true } to enable worker mode.',
+			);
 		}
 
 		if (!this.isInitialized) {

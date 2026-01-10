@@ -19,6 +19,7 @@ import {
 	InvalidCronError,
 	MonqueError,
 	ShutdownTimeoutError,
+	WorkerModeError,
 	WorkerRegistrationError,
 } from '@/shared';
 
@@ -200,6 +201,33 @@ describe('errors', () => {
 		});
 	});
 
+	describe('WorkerModeError', () => {
+		it('should create an error with the correct message', () => {
+			const error = new WorkerModeError('Instance is not configured as a worker');
+			expect(error.message).toBe('Instance is not configured as a worker');
+		});
+
+		it('should have name "WorkerModeError"', () => {
+			const error = new WorkerModeError('Error');
+			expect(error.name).toBe('WorkerModeError');
+		});
+
+		it('should be an instance of MonqueError', () => {
+			const error = new WorkerModeError('Error');
+			expect(error).toBeInstanceOf(MonqueError);
+		});
+
+		it('should be an instance of Error', () => {
+			const error = new WorkerModeError('Error');
+			expect(error).toBeInstanceOf(Error);
+		});
+
+		it('should have a stack trace', () => {
+			const error = new WorkerModeError('Error');
+			expect(error.stack).toBeDefined();
+		});
+	});
+
 	describe('error inheritance chain', () => {
 		it('InvalidCronError should be catchable as MonqueError', () => {
 			const error = new InvalidCronError('bad', 'Invalid');
@@ -261,6 +289,21 @@ describe('errors', () => {
 			expect(caught).toBe(true);
 		});
 
+		it('WorkerModeError should be catchable as MonqueError', () => {
+			const error = new WorkerModeError('Not a worker');
+			let caught = false;
+
+			try {
+				throw error;
+			} catch (e) {
+				if (e instanceof MonqueError) {
+					caught = true;
+				}
+			}
+
+			expect(caught).toBe(true);
+		});
+
 		it('all errors should be catchable as Error', () => {
 			const errors = [
 				new MonqueError('Base'),
@@ -268,6 +311,7 @@ describe('errors', () => {
 				new ConnectionError('Failed'),
 				new ShutdownTimeoutError('Timeout', []),
 				new WorkerRegistrationError('Failed', 'job'),
+				new WorkerModeError('Not a worker'),
 			];
 
 			for (const error of errors) {

@@ -53,7 +53,7 @@ describe('Monitor Job Lifecycle Events', () => {
 	describe('job:start event', () => {
 		it('should emit job:start when processing begins', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
-			monque = new Monque(db, { collectionName, pollInterval: 50 });
+			monque = new Monque(db, { isWorker: true, collectionName, pollInterval: 50 });
 			monqueInstances.push(monque);
 			await monque.initialize();
 
@@ -80,7 +80,7 @@ describe('Monitor Job Lifecycle Events', () => {
 	describe('job:complete event', () => {
 		it('should emit job:complete with duration when job finishes successfully', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
-			monque = new Monque(db, { collectionName, pollInterval: 50 });
+			monque = new Monque(db, { isWorker: true, collectionName, pollInterval: 50 });
 			monqueInstances.push(monque);
 			await monque.initialize();
 
@@ -111,6 +111,7 @@ describe('Monitor Job Lifecycle Events', () => {
 		it('should emit job:fail with error and willRetry=true when job fails and has retries left', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
 			monque = new Monque(db, {
+				isWorker: true,
 				collectionName,
 				pollInterval: 50,
 				maxRetries: 3,
@@ -142,6 +143,7 @@ describe('Monitor Job Lifecycle Events', () => {
 		it('should emit job:fail with willRetry=false when job fails and max retries reached', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
 			monque = new Monque(db, {
+				isWorker: true,
 				collectionName,
 				pollInterval: 50,
 				maxRetries: 1, // Only 1 attempt allowed (0 retries)
@@ -171,7 +173,7 @@ describe('Monitor Job Lifecycle Events', () => {
 	describe('job:error event', () => {
 		it('should emit job:error for unexpected errors', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
-			monque = new Monque(db, { collectionName, pollInterval: 50 });
+			monque = new Monque(db, { isWorker: true, collectionName, pollInterval: 50 });
 			monqueInstances.push(monque);
 
 			// Register a worker so poll() has something to do and reaches the database
@@ -201,7 +203,7 @@ describe('Monitor Job Lifecycle Events', () => {
 	describe('isHealthy()', () => {
 		it('should return true when running and initialized', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
-			monque = new Monque(db, { collectionName });
+			monque = new Monque(db, { isWorker: true, collectionName });
 			monqueInstances.push(monque);
 			await monque.initialize();
 
@@ -213,7 +215,7 @@ describe('Monitor Job Lifecycle Events', () => {
 
 		it('should return false when stopped', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
-			monque = new Monque(db, { collectionName });
+			monque = new Monque(db, { isWorker: true, collectionName });
 			monqueInstances.push(monque);
 			await monque.initialize();
 
@@ -227,7 +229,7 @@ describe('Monitor Job Lifecycle Events', () => {
 	describe('event listener methods', () => {
 		it('should remove listener with off() method', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
-			monque = new Monque(db, { collectionName, pollInterval: 50 });
+			monque = new Monque(db, { isWorker: true, collectionName, pollInterval: 50 });
 			monqueInstances.push(monque);
 			await monque.initialize();
 
@@ -266,7 +268,7 @@ describe('Monitor Job Lifecycle Events', () => {
 
 		it('should fire listener only once with once() method', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
-			monque = new Monque(db, { collectionName, pollInterval: 50 });
+			monque = new Monque(db, { isWorker: true, collectionName, pollInterval: 50 });
 			monqueInstances.push(monque);
 			await monque.initialize();
 

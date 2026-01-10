@@ -52,6 +52,7 @@ describe('Concurrency & Scalability', () => {
 		// Create multiple Monque instances sharing the same collection
 		for (let i = 0; i < instanceCount; i++) {
 			const monque = new Monque(db, {
+				isWorker: true,
 				collectionName,
 				pollInterval: 50, // Fast polling for test
 				defaultConcurrency: 5,

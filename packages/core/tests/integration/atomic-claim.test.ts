@@ -51,6 +51,7 @@ describe('atomic job claiming', () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
 			const instanceId = 'test-instance-123';
 			const monque = new Monque(db, {
+				isWorker: true,
 				collectionName,
 				pollInterval: 100,
 				schedulerInstanceId: instanceId,
@@ -85,6 +86,7 @@ describe('atomic job claiming', () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
 			const instanceId = 'test-instance-456';
 			const monque = new Monque(db, {
+				isWorker: true,
 				collectionName,
 				pollInterval: 100,
 				schedulerInstanceId: instanceId,
@@ -117,6 +119,7 @@ describe('atomic job claiming', () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
 			const instanceId = 'test-instance-789';
 			const monque = new Monque(db, {
+				isWorker: true,
 				collectionName,
 				pollInterval: 100,
 				schedulerInstanceId: instanceId,
@@ -152,6 +155,7 @@ describe('atomic job claiming', () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
 			const instanceId = 'test-instance-retry';
 			const monque = new Monque(db, {
+				isWorker: true,
 				collectionName,
 				pollInterval: 100,
 				schedulerInstanceId: instanceId,
@@ -199,18 +203,21 @@ describe('atomic job claiming', () => {
 			const instance3Id = 'instance-3';
 
 			const monque1 = new Monque(db, {
+				isWorker: true,
 				collectionName,
 				pollInterval: 50,
 				schedulerInstanceId: instance1Id,
 				defaultConcurrency: 1,
 			});
 			const monque2 = new Monque(db, {
+				isWorker: true,
 				collectionName,
 				pollInterval: 50,
 				schedulerInstanceId: instance2Id,
 				defaultConcurrency: 1,
 			});
 			const monque3 = new Monque(db, {
+				isWorker: true,
 				collectionName,
 				pollInterval: 50,
 				schedulerInstanceId: instance3Id,
@@ -263,12 +270,14 @@ describe('atomic job claiming', () => {
 			const jobCount = 20;
 
 			const monque1 = new Monque(db, {
+				isWorker: true,
 				collectionName,
 				pollInterval: 30,
 				schedulerInstanceId: 'dist-instance-1',
 				defaultConcurrency: 3,
 			});
 			const monque2 = new Monque(db, {
+				isWorker: true,
 				collectionName,
 				pollInterval: 30,
 				schedulerInstanceId: 'dist-instance-2',
@@ -362,6 +371,7 @@ describe('atomic job claiming', () => {
 			await collection.insertOne(claimedJob);
 
 			const monque = new Monque(db, {
+				isWorker: true,
 				collectionName,
 				pollInterval: 100,
 				schedulerInstanceId: 'new-instance',
@@ -391,6 +401,7 @@ describe('atomic job claiming', () => {
 			const instanceId = 'claiming-instance';
 
 			const monque = new Monque(db, {
+				isWorker: true,
 				collectionName,
 				pollInterval: 100,
 				schedulerInstanceId: instanceId,

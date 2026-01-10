@@ -25,7 +25,7 @@ import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest
 
 import { type Job, JobStatus } from '@/jobs';
 import { Monque } from '@/scheduler';
-import { WorkerRegistrationError } from '@/shared';
+import { WorkerModeError, WorkerRegistrationError } from '@/shared';
 
 describe('worker()', () => {
 	let db: Db;
@@ -52,7 +52,7 @@ describe('worker()', () => {
 	describe('registration', () => {
 		it('should register a worker for a job name', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
-			monque = new Monque(db, { collectionName });
+			monque = new Monque(db, { isWorker: true, collectionName });
 			monqueInstances.push(monque);
 			await monque.initialize();
 
@@ -66,7 +66,7 @@ describe('worker()', () => {
 			const jobType1Name = 'job-type-1';
 			const jobType2Name = 'job-type-2';
 			const jobType3Name = 'job-type-3';
-			monque = new Monque(db, { collectionName });
+			monque = new Monque(db, { isWorker: true, collectionName });
 			monqueInstances.push(monque);
 			await monque.initialize();
 
@@ -82,7 +82,7 @@ describe('worker()', () => {
 		it('should throw WorkerRegistrationError when registering same job name twice without replace', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
 			const sameJobName = 'same-job';
-			monque = new Monque(db, { collectionName });
+			monque = new Monque(db, { isWorker: true, collectionName });
 			monqueInstances.push(monque);
 			await monque.initialize();
 
@@ -101,7 +101,7 @@ describe('worker()', () => {
 		it('should replace handler when registering same job name with { replace: true }', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
 			const sameJobName = 'same-job-replace';
-			monque = new Monque(db, { collectionName, pollInterval: 100 });
+			monque = new Monque(db, { isWorker: true, collectionName, pollInterval: 100 });
 			monqueInstances.push(monque);
 			await monque.initialize();
 
@@ -124,7 +124,7 @@ describe('worker()', () => {
 		it('should include job name in WorkerRegistrationError', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
 			const jobName = 'error-job-name';
-			monque = new Monque(db, { collectionName });
+			monque = new Monque(db, { isWorker: true, collectionName });
 			monqueInstances.push(monque);
 			await monque.initialize();
 
@@ -144,7 +144,7 @@ describe('worker()', () => {
 
 		it('should accept concurrency option', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
-			monque = new Monque(db, { collectionName });
+			monque = new Monque(db, { isWorker: true, collectionName });
 			monqueInstances.push(monque);
 			await monque.initialize();
 
@@ -158,7 +158,7 @@ describe('worker()', () => {
 	describe('job processing', () => {
 		it('should process pending jobs when started', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
-			monque = new Monque(db, { collectionName, pollInterval: 100 });
+			monque = new Monque(db, { isWorker: true, collectionName, pollInterval: 100 });
 			monqueInstances.push(monque);
 			await monque.initialize();
 
@@ -175,7 +175,7 @@ describe('worker()', () => {
 
 		it('should pass job to handler with correct data', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
-			monque = new Monque(db, { collectionName, pollInterval: 100 });
+			monque = new Monque(db, { isWorker: true, collectionName, pollInterval: 100 });
 			monqueInstances.push(monque);
 			await monque.initialize();
 
@@ -203,7 +203,7 @@ describe('worker()', () => {
 
 		it('should process jobs in order of nextRunAt', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
-			monque = new Monque(db, { collectionName, pollInterval: 100, defaultConcurrency: 1 });
+			monque = new Monque(db, { isWorker: true, collectionName, pollInterval: 100, defaultConcurrency: 1 });
 			const orderedJobName = 'ordered-job';
 			monqueInstances.push(monque);
 			await monque.initialize();
@@ -229,7 +229,7 @@ describe('worker()', () => {
 
 		it('should only process jobs for registered workers', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
-			monque = new Monque(db, { collectionName, pollInterval: 100 });
+			monque = new Monque(db, { isWorker: true, collectionName, pollInterval: 100 });
 			const registeredJobName = 'registered-job';
 			monqueInstances.push(monque);
 			await monque.initialize();
@@ -252,7 +252,7 @@ describe('worker()', () => {
 
 		it('should handle async handlers', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
-			monque = new Monque(db, { collectionName, pollInterval: 100 });
+			monque = new Monque(db, { isWorker: true, collectionName, pollInterval: 100 });
 			const asyncJobName = 'async-job';
 			monqueInstances.push(monque);
 			await monque.initialize();
@@ -272,7 +272,7 @@ describe('worker()', () => {
 
 		it('should update job status to completed after successful processing', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
-			monque = new Monque(db, { collectionName, pollInterval: 100 });
+			monque = new Monque(db, { isWorker: true, collectionName, pollInterval: 100 });
 			const completeJobName = 'complete-job';
 			monqueInstances.push(monque);
 			await monque.initialize();
@@ -296,7 +296,7 @@ describe('worker()', () => {
 
 		it('should clear lockedAt after successful processing', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
-			monque = new Monque(db, { collectionName, pollInterval: 100 });
+			monque = new Monque(db, { isWorker: true, collectionName, pollInterval: 100 });
 			const unlockJobName = 'unlock-job';
 			monqueInstances.push(monque);
 			await monque.initialize();
@@ -324,7 +324,7 @@ describe('worker()', () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
 			const defaultConcurrency = 2;
 			const concurrencyJobName = 'concurrent-job';
-			monque = new Monque(db, { collectionName, pollInterval: 50, defaultConcurrency });
+			monque = new Monque(db, { isWorker: true, collectionName, pollInterval: 50, defaultConcurrency });
 			monqueInstances.push(monque);
 			await monque.initialize();
 
@@ -364,7 +364,7 @@ describe('worker()', () => {
 
 		it('should respect worker-specific concurrency option', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
-			monque = new Monque(db, { collectionName, pollInterval: 50, defaultConcurrency: 10 });
+			monque = new Monque(db, { isWorker: true, collectionName, pollInterval: 50, defaultConcurrency: 10 });
 			const limitedJobName = 'limited-job';
 			monqueInstances.push(monque);
 			await monque.initialize();
@@ -405,7 +405,7 @@ describe('worker()', () => {
 
 		it('should allow different concurrency per worker type', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
-			monque = new Monque(db, { collectionName, pollInterval: 50, heartbeatInterval: 1000 });
+			monque = new Monque(db, { isWorker: true, collectionName, pollInterval: 50, heartbeatInterval: 1000 });
 			const jobTypeAName = 'type-a';
 			const jobTypeBName = 'type-b';
 			monqueInstances.push(monque);
@@ -472,6 +472,7 @@ describe('worker()', () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
 			const concurrency = 2;
 			monque = new Monque(db, {
+				isWorker: true,
 				collectionName,
 				pollInterval: 50,
 				defaultConcurrency: concurrency,
@@ -506,7 +507,7 @@ describe('worker()', () => {
 	describe('start() and stop()', () => {
 		it('should not process jobs before start() is called', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
-			monque = new Monque(db, { collectionName, pollInterval: 100 });
+			monque = new Monque(db, { isWorker: true, collectionName, pollInterval: 100 });
 			const noStartJobName = 'no-start-job';
 			monqueInstances.push(monque);
 			await monque.initialize();
@@ -524,7 +525,7 @@ describe('worker()', () => {
 
 		it('should stop processing after stop() is called', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
-			monque = new Monque(db, { collectionName, pollInterval: 100 });
+			monque = new Monque(db, { isWorker: true, collectionName, pollInterval: 100 });
 			const stopJobName = 'stop-job';
 			monqueInstances.push(monque);
 			await monque.initialize();
@@ -546,7 +547,7 @@ describe('worker()', () => {
 
 		it('should allow restart after stop()', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
-			monque = new Monque(db, { collectionName, pollInterval: 100 });
+			monque = new Monque(db, { isWorker: true, collectionName, pollInterval: 100 });
 			const restartJobName = 'restart-job';
 			monqueInstances.push(monque);
 			await monque.initialize();
@@ -561,6 +562,120 @@ describe('worker()', () => {
 			await monque.enqueue(restartJobName, {});
 			monque.start();
 
+			await waitFor(async () => handler.mock.calls.length > 0);
+
+			expect(handler).toHaveBeenCalledTimes(1);
+		});
+	});
+
+	describe('worker mode opt-in', () => {
+		it('should throw WorkerModeError when calling worker() without isWorker: true', async () => {
+			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
+			monque = new Monque(db, { collectionName }); // No isWorker: true
+			monqueInstances.push(monque);
+			await monque.initialize();
+
+			const handler = vi.fn();
+			expect(() => monque.worker(TEST_CONSTANTS.JOB_NAME, handler)).toThrow(WorkerModeError);
+			expect(() => monque.worker(TEST_CONSTANTS.JOB_NAME, handler)).toThrow(
+				/instance is not configured as a worker/,
+			);
+		});
+
+		it('should throw WorkerModeError when calling start() without isWorker: true', async () => {
+			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
+			monque = new Monque(db, { collectionName }); // No isWorker: true
+			monqueInstances.push(monque);
+			await monque.initialize();
+
+			expect(() => monque.start()).toThrow(WorkerModeError);
+			expect(() => monque.start()).toThrow(/instance is not configured as a worker/);
+		});
+
+		it('should allow enqueue() without isWorker: true', async () => {
+			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
+			monque = new Monque(db, { collectionName }); // No isWorker: true
+			monqueInstances.push(monque);
+			await monque.initialize();
+
+			// enqueue should work without isWorker: true
+			const job = await monque.enqueue(TEST_CONSTANTS.JOB_NAME, { test: true });
+			expect(job).toBeDefined();
+			expect(job._id).toBeDefined();
+			expect(job.name).toBe(TEST_CONSTANTS.JOB_NAME);
+		});
+
+		it('should allow now() without isWorker: true', async () => {
+			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
+			monque = new Monque(db, { collectionName }); // No isWorker: true
+			monqueInstances.push(monque);
+			await monque.initialize();
+
+			// now() should work without isWorker: true
+			const job = await monque.now(TEST_CONSTANTS.JOB_NAME, { immediate: true });
+			expect(job).toBeDefined();
+			expect(job._id).toBeDefined();
+		});
+
+		it('should allow schedule() without isWorker: true', async () => {
+			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
+			monque = new Monque(db, { collectionName }); // No isWorker: true
+			monqueInstances.push(monque);
+			await monque.initialize();
+
+			// schedule() should work without isWorker: true
+			const job = await monque.schedule('0 * * * *', TEST_CONSTANTS.JOB_NAME, { scheduled: true });
+			expect(job).toBeDefined();
+			expect(job._id).toBeDefined();
+			expect(job.repeatInterval).toBe('0 * * * *');
+		});
+
+		it('should allow getJobs() without isWorker: true', async () => {
+			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
+			monque = new Monque(db, { collectionName }); // No isWorker: true
+			monqueInstances.push(monque);
+			await monque.initialize();
+
+			await monque.enqueue(TEST_CONSTANTS.JOB_NAME, { test: true });
+
+			// getJobs() should work without isWorker: true
+			const jobs = await monque.getJobs();
+			expect(jobs).toHaveLength(1);
+		});
+
+		it('should allow getJob() without isWorker: true', async () => {
+			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
+			monque = new Monque(db, { collectionName }); // No isWorker: true
+			monqueInstances.push(monque);
+			await monque.initialize();
+
+			const enqueuedJob = await monque.enqueue(TEST_CONSTANTS.JOB_NAME, { test: true });
+
+			// getJob() should work without isWorker: true
+			const job = await monque.getJob(enqueuedJob._id);
+			expect(job).toBeDefined();
+			expect(job?._id).toEqual(enqueuedJob._id);
+		});
+
+		it('should not process jobs without isWorker: true', async () => {
+			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
+			const enqueueOnly = new Monque(db, { collectionName }); // Non-worker instance
+			monqueInstances.push(enqueueOnly);
+			await enqueueOnly.initialize();
+
+			// Enqueue a job using the non-worker instance
+			await enqueueOnly.enqueue(TEST_CONSTANTS.JOB_NAME, { test: true });
+
+			// Create a worker instance to process jobs
+			const workerInstance = new Monque(db, { isWorker: true, collectionName, pollInterval: 100 });
+			monqueInstances.push(workerInstance);
+			await workerInstance.initialize();
+
+			const handler = vi.fn();
+			workerInstance.worker(TEST_CONSTANTS.JOB_NAME, handler);
+			workerInstance.start();
+
+			// Worker should process the job enqueued by the non-worker instance
 			await waitFor(async () => handler.mock.calls.length > 0);
 
 			expect(handler).toHaveBeenCalledTimes(1);

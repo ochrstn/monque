@@ -50,7 +50,7 @@ describe('atomic job locking', () => {
 	describe('single job acquisition', () => {
 		it('should set lockedAt when acquiring a job', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
-			const monque = new Monque(db, { collectionName, pollInterval: 100 });
+			const monque = new Monque(db, { isWorker: true, collectionName, pollInterval: 100 });
 			monqueInstances.push(monque);
 			await monque.initialize();
 
@@ -80,7 +80,7 @@ describe('atomic job locking', () => {
 
 		it('should update status to processing when job is acquired', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
-			const monque = new Monque(db, { collectionName, pollInterval: 100 });
+			const monque = new Monque(db, { isWorker: true, collectionName, pollInterval: 100 });
 			monqueInstances.push(monque);
 			await monque.initialize();
 
@@ -117,9 +117,9 @@ describe('atomic job locking', () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
 
 			// Create two scheduler instances pointing to same collection
-			const monque1 = new Monque(db, { collectionName, pollInterval: 50, defaultConcurrency: 5 });
+			const monque1 = new Monque(db, { isWorker: true, collectionName, pollInterval: 50, defaultConcurrency: 5 });
 			monqueInstances.push(monque1);
-			const monque2 = new Monque(db, { collectionName, pollInterval: 50, defaultConcurrency: 5 });
+			const monque2 = new Monque(db, { isWorker: true, collectionName, pollInterval: 50, defaultConcurrency: 5 });
 			monqueInstances.push(monque2);
 
 			await monque1.initialize();
@@ -180,9 +180,9 @@ describe('atomic job locking', () => {
 		it('should distribute jobs between concurrent workers', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
 
-			const monque1 = new Monque(db, { collectionName, pollInterval: 30, defaultConcurrency: 2 });
+			const monque1 = new Monque(db, { isWorker: true, collectionName, pollInterval: 30, defaultConcurrency: 2 });
 			monqueInstances.push(monque1);
-			const monque2 = new Monque(db, { collectionName, pollInterval: 30, defaultConcurrency: 2 });
+			const monque2 = new Monque(db, { isWorker: true, collectionName, pollInterval: 30, defaultConcurrency: 2 });
 			monqueInstances.push(monque2);
 
 			await monque1.initialize();
@@ -234,11 +234,11 @@ describe('atomic job locking', () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
 
 			// Very short poll interval to increase contention
-			const monque1 = new Monque(db, { collectionName, pollInterval: 10, defaultConcurrency: 1 });
+			const monque1 = new Monque(db, { isWorker: true, collectionName, pollInterval: 10, defaultConcurrency: 1 });
 			monqueInstances.push(monque1);
-			const monque2 = new Monque(db, { collectionName, pollInterval: 10, defaultConcurrency: 1 });
+			const monque2 = new Monque(db, { isWorker: true, collectionName, pollInterval: 10, defaultConcurrency: 1 });
 			monqueInstances.push(monque2);
-			const monque3 = new Monque(db, { collectionName, pollInterval: 10, defaultConcurrency: 1 });
+			const monque3 = new Monque(db, { isWorker: true, collectionName, pollInterval: 10, defaultConcurrency: 1 });
 			monqueInstances.push(monque3);
 
 			await monque1.initialize();
@@ -292,7 +292,7 @@ describe('atomic job locking', () => {
 	describe('lock state transitions', () => {
 		it('should transition pending → processing → completed', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
-			const monque = new Monque(db, { collectionName, pollInterval: 100 });
+			const monque = new Monque(db, { isWorker: true, collectionName, pollInterval: 100 });
 			monqueInstances.push(monque);
 			await monque.initialize();
 
@@ -338,7 +338,7 @@ describe('atomic job locking', () => {
 
 		it('should clear lockedAt after job completion', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
-			const monque = new Monque(db, { collectionName, pollInterval: 100 });
+			const monque = new Monque(db, { isWorker: true, collectionName, pollInterval: 100 });
 			monqueInstances.push(monque);
 			await monque.initialize();
 
@@ -363,7 +363,7 @@ describe('atomic job locking', () => {
 
 		it('should update updatedAt timestamp on state changes', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
-			const monque = new Monque(db, { collectionName, pollInterval: 100 });
+			const monque = new Monque(db, { isWorker: true, collectionName, pollInterval: 100 });
 			monqueInstances.push(monque);
 			await monque.initialize();
 
@@ -399,7 +399,7 @@ describe('atomic job locking', () => {
 	describe('only pending jobs are acquired', () => {
 		it('should not acquire jobs in processing status', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
-			const monque = new Monque(db, { collectionName, pollInterval: 100 });
+			const monque = new Monque(db, { isWorker: true, collectionName, pollInterval: 100 });
 			monqueInstances.push(monque);
 			await monque.initialize();
 
@@ -428,7 +428,7 @@ describe('atomic job locking', () => {
 
 		it('should not acquire jobs in completed status', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
-			const monque = new Monque(db, { collectionName, pollInterval: 100 });
+			const monque = new Monque(db, { isWorker: true, collectionName, pollInterval: 100 });
 			monqueInstances.push(monque);
 			await monque.initialize();
 
@@ -452,7 +452,7 @@ describe('atomic job locking', () => {
 
 		it('should not acquire jobs in failed status', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
-			const monque = new Monque(db, { collectionName, pollInterval: 100 });
+			const monque = new Monque(db, { isWorker: true, collectionName, pollInterval: 100 });
 			monqueInstances.push(monque);
 			await monque.initialize();
 
@@ -476,7 +476,7 @@ describe('atomic job locking', () => {
 
 		it('should not acquire jobs with nextRunAt in the future', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
-			const monque = new Monque(db, { collectionName, pollInterval: 100 });
+			const monque = new Monque(db, { isWorker: true, collectionName, pollInterval: 100 });
 			monqueInstances.push(monque);
 			await monque.initialize();
 

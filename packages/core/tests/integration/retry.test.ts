@@ -58,6 +58,7 @@ describe('Retry Logic', () => {
 		it('should schedule first retry with correct backoff timing (2^1 * 1000 = 2000ms)', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
 			monque = new Monque(db, {
+				isWorker: true,
 				collectionName,
 				pollInterval: 100,
 				baseRetryInterval: 1000,
@@ -111,6 +112,7 @@ describe('Retry Logic', () => {
 		it('should schedule second retry with correct backoff timing (2^2 * 1000 = 4000ms)', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
 			monque = new Monque(db, {
+				isWorker: true,
 				collectionName,
 				pollInterval: 50,
 				baseRetryInterval: 1000,
@@ -169,6 +171,7 @@ describe('Retry Logic', () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
 			const customBaseInterval = 500; // 500ms instead of default 1000ms
 			monque = new Monque(db, {
+				isWorker: true,
 				collectionName,
 				pollInterval: 50,
 				baseRetryInterval: customBaseInterval,
@@ -211,6 +214,7 @@ describe('Retry Logic', () => {
 		it('should increment failCount on job failure', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
 			monque = new Monque(db, {
+				isWorker: true,
 				collectionName,
 				pollInterval: 50,
 			});
@@ -244,6 +248,7 @@ describe('Retry Logic', () => {
 		it('should store failReason from error message', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
 			monque = new Monque(db, {
+				isWorker: true,
 				collectionName,
 				pollInterval: 50,
 			});
@@ -277,6 +282,7 @@ describe('Retry Logic', () => {
 		it('should update failReason on subsequent failures', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
 			monque = new Monque(db, {
+				isWorker: true,
 				collectionName,
 				pollInterval: 50,
 				baseRetryInterval: 10, // Fast retries for testing
@@ -318,6 +324,7 @@ describe('Retry Logic', () => {
 		it('should handle both sync throws and async rejections identically', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
 			monque = new Monque(db, {
+				isWorker: true,
 				collectionName,
 				pollInterval: 50,
 			});
@@ -356,6 +363,7 @@ describe('Retry Logic', () => {
 		it('should set status back to pending after failure (if retries remain)', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
 			monque = new Monque(db, {
+				isWorker: true,
 				collectionName,
 				pollInterval: 50,
 				maxRetries: 5,
@@ -392,6 +400,7 @@ describe('Retry Logic', () => {
 		it('should mark job as permanently failed after maxRetries (default: 10)', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
 			monque = new Monque(db, {
+				isWorker: true,
 				collectionName,
 				pollInterval: 50,
 				maxRetries: 3, // Lower for faster testing
@@ -433,6 +442,7 @@ describe('Retry Logic', () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
 			const customMaxRetries = 2;
 			monque = new Monque(db, {
+				isWorker: true,
 				collectionName,
 				pollInterval: 50,
 				maxRetries: customMaxRetries,
@@ -473,6 +483,7 @@ describe('Retry Logic', () => {
 		it('should not process permanently failed jobs', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
 			monque = new Monque(db, {
+				isWorker: true,
 				collectionName,
 				pollInterval: 50,
 			});
@@ -506,6 +517,7 @@ describe('Retry Logic', () => {
 		it('should preserve job data on permanent failure', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
 			monque = new Monque(db, {
+				isWorker: true,
 				collectionName,
 				pollInterval: 50,
 				maxRetries: 1,
@@ -553,6 +565,7 @@ describe('Retry Logic', () => {
 		it('should emit job:fail event with willRetry=true when retries remain', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
 			monque = new Monque(db, {
+				isWorker: true,
 				collectionName,
 				pollInterval: 50,
 				maxRetries: 5,
@@ -586,6 +599,7 @@ describe('Retry Logic', () => {
 		it('should emit job:fail event with willRetry=false on final failure', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
 			monque = new Monque(db, {
+				isWorker: true,
 				collectionName,
 				pollInterval: 50,
 				maxRetries: 1,

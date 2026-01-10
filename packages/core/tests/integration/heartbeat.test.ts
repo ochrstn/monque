@@ -50,6 +50,7 @@ describe('heartbeat mechanism', () => {
 		it('should set lastHeartbeat when claiming a job', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
 			const monque = new Monque(db, {
+				isWorker: true,
 				collectionName,
 				pollInterval: 100,
 				heartbeatInterval: 100,
@@ -79,6 +80,7 @@ describe('heartbeat mechanism', () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
 			const heartbeatInterval = 100; // 100ms for faster test
 			const monque = new Monque(db, {
+				isWorker: true,
 				collectionName,
 				pollInterval: 50,
 				heartbeatInterval,
@@ -135,6 +137,7 @@ describe('heartbeat mechanism', () => {
 		it('should clear lastHeartbeat when job completes', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
 			const monque = new Monque(db, {
+				isWorker: true,
 				collectionName,
 				pollInterval: 100,
 				heartbeatInterval: 50,
@@ -170,6 +173,7 @@ describe('heartbeat mechanism', () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
 			const customInterval = 200;
 			const monque = new Monque(db, {
+				isWorker: true,
 				collectionName,
 				pollInterval: 50,
 				heartbeatInterval: customInterval,
@@ -197,6 +201,7 @@ describe('heartbeat mechanism', () => {
 		it('should use default heartbeat interval of 30000ms', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
 			const monque = new Monque(db, {
+				isWorker: true,
 				collectionName,
 				pollInterval: 50,
 				// No heartbeatInterval specified
@@ -244,6 +249,7 @@ describe('heartbeat mechanism', () => {
 			await collection.insertOne(staleJob);
 
 			const monque = new Monque(db, {
+				isWorker: true,
 				collectionName,
 				pollInterval: 100,
 				lockTimeout,
@@ -288,6 +294,7 @@ describe('heartbeat mechanism', () => {
 			await collection.insertOne(activeJob);
 
 			const monque = new Monque(db, {
+				isWorker: true,
 				collectionName,
 				pollInterval: 100,
 				lockTimeout,
@@ -309,6 +316,7 @@ describe('heartbeat mechanism', () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
 			const instanceId = 'shutdown-instance';
 			const monque = new Monque(db, {
+				isWorker: true,
 				collectionName,
 				pollInterval: 50,
 				heartbeatInterval: 50,

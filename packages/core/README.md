@@ -25,6 +25,10 @@ pnpm add @monque/core mongodb
 
 ## Usage
 
+### Worker Mode (Processing Jobs)
+
+To process jobs, instances must opt-in to worker mode by setting `isWorker: true`:
+
 ```typescript
 import { Monque } from '@monque/core';
 import { MongoClient } from 'mongodb';
@@ -32,32 +36,63 @@ import { MongoClient } from 'mongodb';
 const client = new MongoClient('mongodb://localhost:27017');
 await client.connect();
 
-const monque = new Monque(client.db('myapp'), {
+// Create a worker instance that can process jobs
+const worker = new Monque(client.db('myapp'), {
+  isWorker: true, // Required to process jobs
   collectionName: 'jobs',
   pollInterval: 1000,
   maxRetries: 10,
   defaultConcurrency: 5,
 });
 
-await monque.initialize();
+await worker.initialize();
 
 // Register workers
-monque.worker('send-email', async (job) => {
+worker.worker('send-email', async (job) => {
   await sendEmail(job.data.to, job.data.subject);
 });
 
 // Start processing
-monque.start();
-
-// Enqueue jobs
-await monque.enqueue('send-email', { to: 'user@example.com', subject: 'Hello' });
+worker.start();
 
 // Schedule recurring jobs
-await monque.schedule('0 9 * * *', 'daily-report', { type: 'summary' });
+await worker.schedule('0 9 * * *', 'daily-report', { type: 'summary' });
+
+// Enqueue jobs
+await worker.enqueue('send-email', { to: 'user@example.com', subject: 'Hello' });
 
 // Graceful shutdown
-await monque.stop();
+await worker.stop();
 ```
+
+### Enqueue-Only Mode (No Processing)
+
+Instances without `isWorker: true` can only enqueue jobs - they cannot process them:
+
+```typescript
+// Create an enqueue-only instance (cannot process jobs)
+const enqueueOnly = new Monque(client.db('myapp'), {
+  collectionName: 'jobs',
+  // isWorker defaults to false
+});
+
+await enqueueOnly.initialize();
+
+// Can enqueue jobs
+await enqueueOnly.enqueue('send-email', { to: 'user@example.com', subject: 'Hello' });
+await enqueueOnly.now('process-order', { orderId: '123' });
+await enqueueOnly.schedule('0 * * * *', 'hourly-task', {});
+
+// Can query jobs
+const jobs = await enqueueOnly.getJobs();
+const job = await enqueueOnly.getJob(jobId);
+
+// These will throw WorkerModeError:
+// enqueueOnly.worker('send-email', handler); // ❌ Error
+// enqueueOnly.start();                       // ❌ Error
+```
+
+This separation allows you to have dedicated worker processes and separate API servers that only enqueue jobs.
 
 ## API
 
@@ -66,6 +101,7 @@ await monque.stop();
 Creates a new Monque instance.
 
 **Options:**
+- `isWorker` - Enable worker mode to process jobs (default: `false`)
 - `collectionName` - MongoDB collection name (default: `'monque_jobs'`)
 - `pollInterval` - Polling interval in ms (default: `1000`)
 - `maxRetries` - Max retry attempts (default: `10`)

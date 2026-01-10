@@ -15,6 +15,14 @@
  */
 export interface MonqueOptions {
 	/**
+	 * Whether this instance should function as a worker that processes jobs.
+	 * When `false`, the instance can only enqueue jobs but not process them.
+	 * When `true`, the instance will poll for and process jobs when `start()` is called.
+	 * @default false
+	 */
+	isWorker?: boolean;
+
+	/**
 	 * Name of the MongoDB collection for storing jobs.
 	 * @default 'monque_jobs'
 	 */

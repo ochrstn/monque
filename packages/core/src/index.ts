@@ -35,6 +35,7 @@ export {
 	MonqueError,
 	ShutdownTimeoutError,
 	validateCronExpression,
+	WorkerModeError,
 	WorkerRegistrationError,
 } from '@/shared';
 // Types - Workers

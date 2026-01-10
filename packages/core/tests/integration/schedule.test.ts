@@ -54,7 +54,7 @@ describe('schedule()', () => {
 	describe('basic cron scheduling', () => {
 		it('should schedule a job with a cron expression', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
-			const monque = new Monque(db, { collectionName });
+			const monque = new Monque(db, { isWorker: true, collectionName });
 			monqueInstances.push(monque);
 			await monque.initialize();
 
@@ -72,7 +72,7 @@ describe('schedule()', () => {
 
 		it('should set status to pending', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
-			const monque = new Monque(db, { collectionName });
+			const monque = new Monque(db, { isWorker: true, collectionName });
 			monqueInstances.push(monque);
 			await monque.initialize();
 
@@ -85,7 +85,7 @@ describe('schedule()', () => {
 
 		it('should store the repeatInterval (cron expression)', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
-			const monque = new Monque(db, { collectionName });
+			const monque = new Monque(db, { isWorker: true, collectionName });
 			monqueInstances.push(monque);
 			await monque.initialize();
 
@@ -97,7 +97,7 @@ describe('schedule()', () => {
 
 		it('should calculate nextRunAt from cron expression', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
-			const monque = new Monque(db, { collectionName });
+			const monque = new Monque(db, { isWorker: true, collectionName });
 			monqueInstances.push(monque);
 			await monque.initialize();
 
@@ -119,7 +119,7 @@ describe('schedule()', () => {
 
 		it('should calculate correct nextRunAt for hourly cron', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
-			const monque = new Monque(db, { collectionName });
+			const monque = new Monque(db, { isWorker: true, collectionName });
 			monqueInstances.push(monque);
 			await monque.initialize();
 
@@ -132,7 +132,7 @@ describe('schedule()', () => {
 
 		it('should set failCount to 0', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
-			const monque = new Monque(db, { collectionName });
+			const monque = new Monque(db, { isWorker: true, collectionName });
 			monqueInstances.push(monque);
 			await monque.initialize();
 
@@ -147,7 +147,7 @@ describe('schedule()', () => {
 
 		it('should set createdAt and updatedAt timestamps', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
-			const monque = new Monque(db, { collectionName });
+			const monque = new Monque(db, { isWorker: true, collectionName });
 			monqueInstances.push(monque);
 			await monque.initialize();
 
@@ -167,7 +167,7 @@ describe('schedule()', () => {
 
 		it('should schedule jobs with various valid cron expressions', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
-			const monque = new Monque(db, { collectionName });
+			const monque = new Monque(db, { isWorker: true, collectionName });
 			monqueInstances.push(monque);
 			await monque.initialize();
 
@@ -193,7 +193,7 @@ describe('schedule()', () => {
 	describe('invalid cron expressions', () => {
 		it('should throw InvalidCronError for invalid expression', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
-			const monque = new Monque(db, { collectionName });
+			const monque = new Monque(db, { isWorker: true, collectionName });
 			monqueInstances.push(monque);
 			await monque.initialize();
 
@@ -204,7 +204,7 @@ describe('schedule()', () => {
 
 		it('should include the invalid expression in the error', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
-			const monque = new Monque(db, { collectionName });
+			const monque = new Monque(db, { isWorker: true, collectionName });
 			monqueInstances.push(monque);
 			await monque.initialize();
 
@@ -221,7 +221,7 @@ describe('schedule()', () => {
 
 		it('should provide helpful error message with format example', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
-			const monque = new Monque(db, { collectionName });
+			const monque = new Monque(db, { isWorker: true, collectionName });
 			monqueInstances.push(monque);
 			await monque.initialize();
 
@@ -243,7 +243,7 @@ describe('schedule()', () => {
 
 		it('should reject expressions with invalid characters', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
-			const monque = new Monque(db, { collectionName });
+			const monque = new Monque(db, { isWorker: true, collectionName });
 			monqueInstances.push(monque);
 			await monque.initialize();
 
@@ -254,7 +254,7 @@ describe('schedule()', () => {
 
 		it('should reject expressions with invalid field values', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
-			const monque = new Monque(db, { collectionName });
+			const monque = new Monque(db, { isWorker: true, collectionName });
 			monqueInstances.push(monque);
 			await monque.initialize();
 
@@ -265,7 +265,7 @@ describe('schedule()', () => {
 
 		it('should reject expressions with out-of-range hour values', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
-			const monque = new Monque(db, { collectionName });
+			const monque = new Monque(db, { isWorker: true, collectionName });
 			monqueInstances.push(monque);
 			await monque.initialize();
 
@@ -279,7 +279,7 @@ describe('schedule()', () => {
 	describe('uniqueKey deduplication', () => {
 		it('should create a new job when uniqueKey is not provided', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
-			const monque = new Monque(db, { collectionName });
+			const monque = new Monque(db, { isWorker: true, collectionName });
 			monqueInstances.push(monque);
 			await monque.initialize();
 
@@ -299,7 +299,7 @@ describe('schedule()', () => {
 
 		it('should create a new job when uniqueKey is provided for the first time', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
-			const monque = new Monque(db, { collectionName });
+			const monque = new Monque(db, { isWorker: true, collectionName });
 			const uniqueKey = 'unique-schedule-1';
 			monqueInstances.push(monque);
 			await monque.initialize();
@@ -318,7 +318,7 @@ describe('schedule()', () => {
 
 		it('should return existing job when duplicate uniqueKey already exists for same name', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
-			const monque = new Monque(db, { collectionName });
+			const monque = new Monque(db, { isWorker: true, collectionName });
 			monqueInstances.push(monque);
 			await monque.initialize();
 
@@ -347,7 +347,7 @@ describe('schedule()', () => {
 
 		it('should allow same uniqueKey for different job names', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
-			const monque = new Monque(db, { collectionName });
+			const monque = new Monque(db, { isWorker: true, collectionName });
 			monqueInstances.push(monque);
 			await monque.initialize();
 
@@ -371,7 +371,7 @@ describe('schedule()', () => {
 
 		it('should not update existing job data when duplicate uniqueKey is scheduled', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
-			const monque = new Monque(db, { collectionName });
+			const monque = new Monque(db, { isWorker: true, collectionName });
 			monqueInstances.push(monque);
 			await monque.initialize();
 
@@ -403,7 +403,7 @@ describe('schedule()', () => {
 
 		it('should preserve uniqueKey in the persisted job', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
-			const monque = new Monque(db, { collectionName });
+			const monque = new Monque(db, { isWorker: true, collectionName });
 			monqueInstances.push(monque);
 			await monque.initialize();
 
@@ -428,7 +428,7 @@ describe('schedule()', () => {
 	describe('recurring job completion and rescheduling', () => {
 		it('should reschedule job after successful completion', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
-			const monque = new Monque(db, { collectionName, pollInterval: 100 });
+			const monque = new Monque(db, { isWorker: true, collectionName, pollInterval: 100 });
 			monqueInstances.push(monque);
 			await monque.initialize();
 
@@ -465,7 +465,7 @@ describe('schedule()', () => {
 
 		it('should calculate next run from original cron timing', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
-			const monque = new Monque(db, { collectionName, pollInterval: 100 });
+			const monque = new Monque(db, { isWorker: true, collectionName, pollInterval: 100 });
 			monqueInstances.push(monque);
 			await monque.initialize();
 
@@ -499,7 +499,7 @@ describe('schedule()', () => {
 
 		it('should reset failCount to 0 after successful completion', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
-			const monque = new Monque(db, { collectionName, pollInterval: 100, maxRetries: 5 });
+			const monque = new Monque(db, { isWorker: true, collectionName, pollInterval: 100, maxRetries: 5 });
 			monqueInstances.push(monque);
 			await monque.initialize();
 
@@ -556,7 +556,7 @@ describe('schedule()', () => {
 
 		it('should preserve repeatInterval after retry failure', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
-			const monque = new Monque(db, { collectionName, pollInterval: 100, maxRetries: 5 });
+			const monque = new Monque(db, { isWorker: true, collectionName, pollInterval: 100, maxRetries: 5 });
 			monqueInstances.push(monque);
 			await monque.initialize();
 
@@ -594,6 +594,7 @@ describe('schedule()', () => {
 		it('should use cron timing for next run after successful retry (not backoff)', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
 			const monque = new Monque(db, {
+				isWorker: true,
 				collectionName,
 				pollInterval: 100,
 				maxRetries: 5,
@@ -656,7 +657,7 @@ describe('schedule()', () => {
 
 		it('should not reschedule one-time jobs after completion', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
-			const monque = new Monque(db, { collectionName, pollInterval: 100 });
+			const monque = new Monque(db, { isWorker: true, collectionName, pollInterval: 100 });
 			monqueInstances.push(monque);
 			await monque.initialize();
 
@@ -684,7 +685,7 @@ describe('schedule()', () => {
 
 		it('should emit job:complete event for recurring jobs', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
-			const monque = new Monque(db, { collectionName, pollInterval: 100 });
+			const monque = new Monque(db, { isWorker: true, collectionName, pollInterval: 100 });
 			monqueInstances.push(monque);
 			await monque.initialize();
 
@@ -721,7 +722,7 @@ describe('schedule()', () => {
 
 		it('should clear failReason after successful completion', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
-			const monque = new Monque(db, { collectionName, pollInterval: 100, maxRetries: 5 });
+			const monque = new Monque(db, { isWorker: true, collectionName, pollInterval: 100, maxRetries: 5 });
 			monqueInstances.push(monque);
 			await monque.initialize();
 
@@ -778,7 +779,7 @@ describe('schedule()', () => {
 	describe('data integrity', () => {
 		it('should preserve job data through scheduling', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
-			const monque = new Monque(db, { collectionName });
+			const monque = new Monque(db, { isWorker: true, collectionName });
 			monqueInstances.push(monque);
 			await monque.initialize();
 
@@ -806,7 +807,7 @@ describe('schedule()', () => {
 
 		it('should preserve job name through scheduling', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
-			const monque = new Monque(db, { collectionName });
+			const monque = new Monque(db, { isWorker: true, collectionName });
 			monqueInstances.push(monque);
 			await monque.initialize();
 
@@ -820,7 +821,7 @@ describe('schedule()', () => {
 	describe('error handling', () => {
 		it('should throw if scheduler is not initialized', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
-			const monque = new Monque(db, { collectionName });
+			const monque = new Monque(db, { isWorker: true, collectionName });
 			monqueInstances.push(monque);
 			// Do NOT call monque.initialize()
 

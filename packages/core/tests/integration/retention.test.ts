@@ -33,6 +33,7 @@ describe('job retention', () => {
 		collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
 		// Configure retention to clean up every 100ms, keeping completed jobs for 5000ms
 		const monque = new Monque(db, {
+				isWorker: true,
 			collectionName,
 			pollInterval: 1000,
 			jobRetention: {
@@ -86,6 +87,7 @@ describe('job retention', () => {
 	it('should delete failed jobs older than specified retention', async () => {
 		collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
 		const monque = new Monque(db, {
+				isWorker: true,
 			collectionName,
 			pollInterval: 1000,
 			jobRetention: {
@@ -136,6 +138,7 @@ describe('job retention', () => {
 	it('should not delete jobs if retention is not configured', async () => {
 		collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
 		const monque = new Monque(db, {
+				isWorker: true,
 			collectionName,
 			pollInterval: 1000,
 			// No jobRetention

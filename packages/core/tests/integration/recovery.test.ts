@@ -51,6 +51,7 @@ describe('recovery and cleanup', () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
 			// Use a short lock timeout for testing
 			const monque = new Monque(db, {
+				isWorker: true,
 				collectionName,
 				lockTimeout: 1000,
 				recoverStaleJobs: true,
@@ -92,6 +93,7 @@ describe('recovery and cleanup', () => {
 		it('should not recover non-stale jobs', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
 			const monque = new Monque(db, {
+				isWorker: true,
 				collectionName,
 				lockTimeout: 5000,
 				recoverStaleJobs: true,
@@ -130,7 +132,7 @@ describe('recovery and cleanup', () => {
 	describe('failReason cleanup', () => {
 		it('should remove failReason on successful completion', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
-			const monque = new Monque(db, { collectionName, pollInterval: 100 });
+			const monque = new Monque(db, { isWorker: true, collectionName, pollInterval: 100 });
 			monqueInstances.push(monque);
 			await monque.initialize();
 
@@ -166,7 +168,7 @@ describe('recovery and cleanup', () => {
 
 		it('should remove failReason on successful completion of recurring job', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
-			const monque = new Monque(db, { collectionName, pollInterval: 100 });
+			const monque = new Monque(db, { isWorker: true, collectionName, pollInterval: 100 });
 			monqueInstances.push(monque);
 			await monque.initialize();
 

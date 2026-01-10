@@ -50,6 +50,7 @@ describe('change streams', () => {
 		it('should emit changestream:connected event when change stream is established', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
 			const monque = new Monque(db, {
+				isWorker: true,
 				collectionName,
 				pollInterval: 10000,
 			});
@@ -71,6 +72,7 @@ describe('change streams', () => {
 		it('should emit changestream:closed event on stop()', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
 			const monque = new Monque(db, {
+				isWorker: true,
 				collectionName,
 				pollInterval: 10000,
 			});
@@ -100,6 +102,7 @@ describe('change streams', () => {
 		it('should trigger job processing immediately when job is inserted', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
 			const monque = new Monque(db, {
+				isWorker: true,
 				collectionName,
 				pollInterval: 5000, // 5 second backup poll - change stream should be faster
 			});
@@ -137,6 +140,7 @@ describe('change streams', () => {
 		it('should process multiple inserted jobs in sequence', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
 			const monque = new Monque(db, {
+				isWorker: true,
 				collectionName,
 				pollInterval: 2000, // 2 second poll to help pick up remaining jobs
 				defaultConcurrency: 1,
@@ -172,6 +176,7 @@ describe('change streams', () => {
 		it('should process job when status changes to pending (retry scenario)', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
 			const monque = new Monque(db, {
+				isWorker: true,
 				collectionName,
 				pollInterval: 2000, // 2 second poll for quicker retry pickup
 				maxRetries: 3,
@@ -209,6 +214,7 @@ describe('change streams', () => {
 		it('should detect recurring job reschedule via update event', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
 			const monque = new Monque(db, {
+				isWorker: true,
 				collectionName,
 				pollInterval: 2000, // nextRunAt changes rely on polling (status changes trigger change stream)
 			});
@@ -244,6 +250,7 @@ describe('change streams', () => {
 		it('should emit changestream:error when an error occurs', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
 			const monque = new Monque(db, {
+				isWorker: true,
 				collectionName,
 				pollInterval: 1000,
 			});
@@ -282,6 +289,7 @@ describe('change streams', () => {
 		it('should continue processing with polling when change stream fails', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
 			const monque = new Monque(db, {
+				isWorker: true,
 				collectionName,
 				pollInterval: 100, // Fast polling for fallback
 			});
@@ -305,6 +313,7 @@ describe('change streams', () => {
 		it('should emit changestream:fallback after exhausting reconnection attempts', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
 			const monque = new Monque(db, {
+				isWorker: true,
 				collectionName,
 				pollInterval: 100, // Fast polling for fallback
 			});
@@ -358,6 +367,7 @@ describe('change streams', () => {
 		it('should attempt reconnection with exponential backoff after change stream error', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
 			const monque = new Monque(db, {
+				isWorker: true,
 				collectionName,
 				pollInterval: 5000,
 			});
@@ -416,6 +426,7 @@ describe('change streams', () => {
 			});
 
 			const monque = new Monque(db, {
+				isWorker: true,
 				collectionName,
 				pollInterval: 100,
 			});
@@ -451,6 +462,7 @@ describe('change streams', () => {
 		it('should use polling as backup even with active change streams', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
 			const monque = new Monque(db, {
+				isWorker: true,
 				collectionName,
 				pollInterval: 200,
 			});
@@ -478,6 +490,7 @@ describe('change streams', () => {
 		it('should close change stream cursor on stop()', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
 			const monque = new Monque(db, {
+				isWorker: true,
 				collectionName,
 				pollInterval: 10000,
 			});
@@ -507,6 +520,7 @@ describe('change streams', () => {
 		it('should not process new jobs after stop() is called', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
 			const monque = new Monque(db, {
+				isWorker: true,
 				collectionName,
 				pollInterval: 10000,
 			});
@@ -542,12 +556,14 @@ describe('change streams', () => {
 			const jobCount = 10;
 
 			const monque1 = new Monque(db, {
+				isWorker: true,
 				collectionName,
 				pollInterval: 5000, // 5 second backup poll
 				schedulerInstanceId: 'cs-instance-1',
 				defaultConcurrency: 2,
 			});
 			const monque2 = new Monque(db, {
+				isWorker: true,
 				collectionName,
 				pollInterval: 5000, // 5 second backup poll
 				schedulerInstanceId: 'cs-instance-2',
@@ -620,6 +636,7 @@ describe('change streams', () => {
 			const pollInterval = 10000; // 10 seconds
 
 			const monque = new Monque(db, {
+				isWorker: true,
 				collectionName,
 				pollInterval,
 			});

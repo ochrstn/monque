@@ -52,7 +52,7 @@ describe('stop() - Graceful Shutdown', () => {
 	describe('polling behavior', () => {
 		it('should stop polling after stop() is called', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
-			monque = new Monque(db, { collectionName, pollInterval: 50 });
+			monque = new Monque(db, { isWorker: true, collectionName, pollInterval: 50 });
 			monqueInstances.push(monque);
 			await monque.initialize();
 
@@ -80,7 +80,7 @@ describe('stop() - Graceful Shutdown', () => {
 
 		it('should not pick up new jobs after stop() is called', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
-			monque = new Monque(db, { collectionName, pollInterval: 50 });
+			monque = new Monque(db, { isWorker: true, collectionName, pollInterval: 50 });
 			monqueInstances.push(monque);
 			await monque.initialize();
 
@@ -115,7 +115,7 @@ describe('stop() - Graceful Shutdown', () => {
 
 		it('should return immediately if already stopped', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
-			monque = new Monque(db, { collectionName, pollInterval: 100 });
+			monque = new Monque(db, { isWorker: true, collectionName, pollInterval: 100 });
 			monqueInstances.push(monque);
 			await monque.initialize();
 
@@ -129,7 +129,7 @@ describe('stop() - Graceful Shutdown', () => {
 
 		it('should allow calling stop() multiple times safely', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
-			monque = new Monque(db, { collectionName, pollInterval: 100 });
+			monque = new Monque(db, { isWorker: true, collectionName, pollInterval: 100 });
 			monqueInstances.push(monque);
 			await monque.initialize();
 
@@ -147,6 +147,7 @@ describe('stop() - Graceful Shutdown', () => {
 		it('should wait for in-progress jobs to complete before resolving', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
 			monque = new Monque(db, {
+				isWorker: true,
 				collectionName,
 				pollInterval: 50,
 				shutdownTimeout: 5000,
@@ -185,6 +186,7 @@ describe('stop() - Graceful Shutdown', () => {
 		it('should wait for multiple in-progress jobs to complete', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
 			monque = new Monque(db, {
+				isWorker: true,
 				collectionName,
 				pollInterval: 50,
 				shutdownTimeout: 5000,
@@ -230,6 +232,7 @@ describe('stop() - Graceful Shutdown', () => {
 		it('should resolve immediately if no jobs are in progress', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
 			monque = new Monque(db, {
+				isWorker: true,
 				collectionName,
 				pollInterval: 100,
 				shutdownTimeout: 5000,
@@ -259,6 +262,7 @@ describe('stop() - Graceful Shutdown', () => {
 		it('should emit job:error with ShutdownTimeoutError when timeout expires', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
 			monque = new Monque(db, {
+				isWorker: true,
 				collectionName,
 				pollInterval: 50,
 				shutdownTimeout: 200, // Short timeout
@@ -302,6 +306,7 @@ describe('stop() - Graceful Shutdown', () => {
 		it('should include incompleteJobs array in ShutdownTimeoutError', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
 			monque = new Monque(db, {
+				isWorker: true,
 				collectionName,
 				pollInterval: 50,
 				shutdownTimeout: 200, // Short timeout
@@ -351,6 +356,7 @@ describe('stop() - Graceful Shutdown', () => {
 			// Test with custom timeout
 			const customTimeout = 150;
 			monque = new Monque(db, {
+				isWorker: true,
 				collectionName,
 				pollInterval: 50,
 				shutdownTimeout: customTimeout,
@@ -393,6 +399,7 @@ describe('stop() - Graceful Shutdown', () => {
 
 			// Create instance without specifying shutdownTimeout
 			monque = new Monque(db, {
+				isWorker: true,
 				collectionName,
 				pollInterval: 100,
 			});
@@ -429,7 +436,7 @@ describe('stop() - Graceful Shutdown', () => {
 	describe('isHealthy() after stop', () => {
 		it('should return false after stop() is called', async () => {
 			collectionName = uniqueCollectionName(TEST_CONSTANTS.COLLECTION_NAME);
-			monque = new Monque(db, { collectionName, pollInterval: 100 });
+			monque = new Monque(db, { isWorker: true, collectionName, pollInterval: 100 });
 			monqueInstances.push(monque);
 			await monque.initialize();
 

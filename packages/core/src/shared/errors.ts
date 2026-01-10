@@ -143,3 +143,36 @@ export class WorkerRegistrationError extends MonqueError {
 		}
 	}
 }
+
+/**
+ * Error thrown when attempting to use worker functionality on a non-worker instance.
+ * This occurs when `start()` or `worker()` is called on a Monque instance that was
+ * created without `isWorker: true`.
+ *
+ * @example
+ * ```typescript
+ * const enqueuOnly = new Monque(db); // isWorker defaults to false
+ *
+ * try {
+ *   enqueuOnly.start(); // throws WorkerModeError
+ * } catch (error) {
+ *   if (error instanceof WorkerModeError) {
+ *     console.error('Instance is not configured as a worker');
+ *   }
+ * }
+ *
+ * // To enable worker mode:
+ * const worker = new Monque(db, { isWorker: true });
+ * worker.start(); // works
+ * ```
+ */
+export class WorkerModeError extends MonqueError {
+	constructor(message: string) {
+		super(message);
+		this.name = 'WorkerModeError';
+		/* istanbul ignore next -- @preserve captureStackTrace is always available in Node.js */
+		if (Error.captureStackTrace) {
+			Error.captureStackTrace(this, WorkerModeError);
+		}
+	}
+}
